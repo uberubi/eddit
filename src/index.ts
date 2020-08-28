@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+import { PostResolver } from "./resolvers/post";
 import { MikroORM } from "@mikro-orm/core";
 import { __prod__ } from "./constants";
 import microConfig from "./mikro-orm.config";
@@ -14,9 +16,10 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver],
+      resolvers: [HelloResolver, PostResolver],
       validate: false,
     }),
+    context: () => ({ em: orm.em }),
   });
   apolloServer.applyMiddleware({ app });
   app.listen(5000, () => {
