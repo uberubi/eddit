@@ -1,4 +1,4 @@
 node_modules
 psql_config.ts
 dist
-reddis-server.exe
+redis-server.exe
