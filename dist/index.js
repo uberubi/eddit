@@ -33,8 +33,8 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const RedisStore = connect_redis_1.default(express_session_1.default);
     const redisClient = redis_1.default.createClient();
     app.use(cors_1.default({
-        origin: 'http://localhost:3000',
-        credentials: true
+        origin: "http://localhost:3000",
+        credentials: true,
     }));
     app.use(express_session_1.default({
         name: "qid",
@@ -49,7 +49,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             secure: constants_1.__prod__,
         },
         saveUninitialized: false,
-        secret: "dasdasdasdaw",
+        secret: "qowiueojwojfalksdjoqiwueo",
         resave: false,
     }));
     const apolloServer = new apollo_server_express_1.ApolloServer({
@@ -59,7 +59,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         }),
         context: ({ req, res }) => ({ em: orm.em, req, res }),
     });
-    apolloServer.applyMiddleware({ app, cors: { origin: false } });
+    apolloServer.applyMiddleware({ app, cors: false });
     app.listen(5000, () => {
         console.log("server started on localhost:5000");
     });

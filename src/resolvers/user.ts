@@ -43,13 +43,13 @@ export class UserResolver {
   @Query(() => User, { nullable: true })
   async me(@Ctx() { req, em }: MyContext) {
     // you are not logged in
-    console.log(req.session);
     if (!req.session.userId) {
       return null;
     }
-
+    
     const user = await em.findOne(User, { id: req.session.userId });
-    return user;
+    console.log(em)
+    return user
   }
 
   @Mutation(() => UserResponse)
