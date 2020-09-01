@@ -1,3 +1,4 @@
+import { COOKIE_NAME } from './../constants';
 import { User } from "../entities/User";
 import { MyContext } from "../types";
 import {
@@ -46,10 +47,10 @@ export class UserResolver {
     if (!req.session.userId) {
       return null;
     }
-    
+
     const user = await em.findOne(User, { id: req.session.userId });
-    console.log(em)
-    return user
+    console.log(em);
+    return user;
   }
 
   @Mutation(() => UserResponse)
@@ -92,7 +93,7 @@ export class UserResolver {
           updated_at: new Date(),
         })
         .returning("*");
-        user = result[0]
+      user = result[0];
       await em.persistAndFlush(user);
     } catch (err) {
       //|| err.detail.includes("already exists")) {
@@ -150,5 +151,20 @@ export class UserResolver {
     return {
       user,
     };
+  }
+
+  @Mutation(() => Boolean)
+  logout(@Ctx() { req, res }: MyContext) {
+   return new Promise((resolve) =>
+      req.session.destroy((err) => {
+        res.clearCookie(COOKIE_NAME)
+        if (err) {
+          console.log(err);
+          resolve(false);
+          return;
+        }
+        resolve(true);
+      })
+    );
   }
 }
