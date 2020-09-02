@@ -1,8 +1,8 @@
-import { User } from "./entities/User";
+import { Post } from './entities/Post';
+import { User } from './entities/User';
+import { dbPassword as password } from './psql_config';
 import "reflect-metadata";
-import { MikroORM } from "@mikro-orm/core";
 import { __prod__ } from "./constants";
-import microConfig from "./mikro-orm.config";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
@@ -14,11 +14,19 @@ import session from "express-session";
 import connectRedis from "connect-redis";
 import cors from "cors";
 import { COOKIE_NAME } from "./constants";
-
+import {createConnection} from 'typeorm'
 
 const main = async () => {
-  const orm = await MikroORM.init(microConfig);
-  await orm.getMigrator().up();
+  const conn = await createConnection({
+    type: 'postgres',
+    database: 'eddit2',
+    username: 'postgres',
+    password,
+    logging: true,
+    synchronize: true,
+    entities: [Post, User]
+  })
+
 
   const app = express();
 
@@ -54,7 +62,7 @@ const main = async () => {
       resolvers: [HelloResolver, PostResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req, res }) => ({ em: orm.em, req, res, redis }),
+    context: ({ req, res }) => ({ req, res, redis }),
   });
 
   apolloServer.applyMiddleware({ app, cors: false });
