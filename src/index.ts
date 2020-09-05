@@ -15,6 +15,7 @@ import connectRedis from "connect-redis";
 import cors from "cors";
 import { COOKIE_NAME } from "./constants";
 import {createConnection} from 'typeorm'
+import path from 'path'
 
 const main = async () => {
   const conn = await createConnection({
@@ -24,9 +25,10 @@ const main = async () => {
     password,
     logging: true,
     synchronize: true,
+    migrations: [path.join(__dirname, "./migrations/*")],
     entities: [Post, User]
   })
-
+  await conn.runMigrations()
   const app = express();
 
   const RedisStore = connectRedis(session);

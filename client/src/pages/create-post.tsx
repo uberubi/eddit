@@ -18,7 +18,6 @@ const CreatePost: React.FC<{}> = ({}) => {
       <Formik
         initialValues={{ title: "", text: "" }}
         onSubmit={async (values) => {
-          await createPost({ input: values });
           const { error } = await createPost({ input: values });
           if (!error) {
             router.push("/");
@@ -27,7 +26,7 @@ const CreatePost: React.FC<{}> = ({}) => {
       >
         {({ isSubmitting }) => (
           <Form>
-            <InputField name="title" placeholder="title" label="title" />
+            <InputField name="title" placeholder="title" label="Title" />
             <Box mt={4}>
               <InputField
                 textarea
@@ -36,14 +35,13 @@ const CreatePost: React.FC<{}> = ({}) => {
                 label="Body"
               />
             </Box>
-
             <Button
               mt={4}
-              isLoading={isSubmitting}
               type="submit"
+              isLoading={isSubmitting}
               variantColor="teal"
             >
-              Create Post
+              create post
             </Button>
           </Form>
         )}
