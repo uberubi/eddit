@@ -1,3 +1,4 @@
+import { Updoot } from './entities/Updoot';
 import { Post } from './entities/Post';
 import { User } from './entities/User';
 import { dbPassword as password } from './psql_config';
@@ -26,7 +27,7 @@ const main = async () => {
     logging: true,
     synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
-    entities: [Post, User]
+    entities: [Post, User, Updoot]
   })
   await conn.runMigrations()
   const app = express();

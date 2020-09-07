@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const Updoot_1 = require("./entities/Updoot");
 const Post_1 = require("./entities/Post");
 const User_1 = require("./entities/User");
 const psql_config_1 = require("./psql_config");
@@ -39,7 +40,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         logging: true,
         synchronize: true,
         migrations: [path_1.default.join(__dirname, "./migrations/*")],
-        entities: [Post_1.Post, User_1.User]
+        entities: [Post_1.Post, User_1.User, Updoot_1.Updoot]
     });
     yield conn.runMigrations();
     const app = express_1.default();
