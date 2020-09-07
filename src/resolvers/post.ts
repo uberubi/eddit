@@ -42,22 +42,26 @@ export class PostResolver {
     return root.text.slice(0, 50) + "...";
   }
 
+
+
+
   @Query(() => PaginatedPosts)
   async posts(
     @Arg("limit", () => Int) limit: number,
     @Arg("cursor", () => String, { nullable: true }) cursor: string | null
-    ): Promise<PaginatedPosts> {
+  ): Promise<PaginatedPosts> {
     // 20 -> 21
     const realLimit = Math.min(50, limit);
     const reaLimitPlusOne = realLimit + 1;
 
-    const replacements: any[] = [reaLimitPlusOne]
+    const replacements: any[] = [reaLimitPlusOne];
 
     if (cursor) {
-      replacements.push(new Date(parseInt(cursor)))
+      replacements.push(new Date(parseInt(cursor)));
     }
 
-    const posts = await getConnection().query(`
+    const posts = await getConnection().query(
+      `
     select p.*,
     json_build_object(
       'id', u.id,
@@ -71,7 +75,9 @@ export class PostResolver {
     ${cursor ? `where p."createdAt" < $2` : ""}
     order by p."createdAt" DESC
     limit $1
-    `, replacements)
+    `,
+      replacements
+    );
 
     // const qb = getConnection()
     //   .getRepository(Post)
