@@ -9,9 +9,7 @@ import {
   Heading,
   Text,
   Flex,
-  Button,
-  Icon,
-  IconButton,
+  Button
 } from "@chakra-ui/core";
 import NextLink from "next/link";
 import { useState } from "react";

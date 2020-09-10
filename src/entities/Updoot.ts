@@ -7,7 +7,6 @@ import {
   PrimaryColumn,
   Column,
 } from "typeorm";
-import { ObjectType, Field } from "type-graphql";
 
 @Entity()
 export class Updoot extends BaseEntity {
