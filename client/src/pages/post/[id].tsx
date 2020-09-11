@@ -20,20 +20,23 @@ const Post = ({}) => {
   if (fetching) {
     return (
       <Layout>
-        <Box>loading...</Box>
+        <div>loading...</div>
       </Layout>
     );
   }
 
   if (error) {
-    return <Box>{error.message}</Box>;
+    return <div>{error.message}</div>;
   }
 
   if (!data?.post) {
-    return <Layout>
-      <Box>could not find post</Box>
-    </Layout>;
+    return (
+      <Layout>
+        <Box>could not find post</Box>
+      </Layout>
+    );
   }
+
   return (
     <Layout>
       <Heading mb={4}>{data.post.title}</Heading>

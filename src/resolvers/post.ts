@@ -1,7 +1,6 @@
 import { Updoot } from "./../entities/Updoot";
 import { getConnection } from "typeorm";
 import { isAuth } from "./../middleware/isAuth";
-import { MyContext } from "./../types";
 import {
   Resolver,
   ObjectType,
@@ -17,6 +16,7 @@ import {
   Root,
 } from "type-graphql";
 import { Post } from "../entities/Post";
+import { MyContext } from "./../types";
 
 @InputType()
 class PostInput {
@@ -54,15 +54,16 @@ export class PostResolver {
     const { userId } = req.session;
 
     const updoot = await Updoot.findOne({ where: { postId, userId } });
+
     // the user has voted on the post before
     // and they are changing their vote
     if (updoot && updoot.value !== realValue) {
       await getConnection().transaction(async (tm) => {
         await tm.query(
           `
-        update updoot
-        set value = $1
-        where "postId" = $2 and "userId" = $3 
+    update updoot
+    set value = $1
+    where "postId" = $2 and "userId" = $3
         `,
           [realValue, postId, userId]
         );
@@ -78,25 +79,25 @@ export class PostResolver {
       });
     } else if (!updoot) {
       // has never voted before
-      getConnection().transaction(async (tm) => {
+      await getConnection().transaction(async (tm) => {
         await tm.query(
           `
-        insert into updoot ("userId", "postId", value)
-        values ($1,$2,$3);
+    insert into updoot ("userId", "postId", value)
+    values ($1, $2, $3)
         `,
           [userId, postId, realValue]
         );
+
         await tm.query(
           `
-        update post
-        set points = points + $1
-        where id = $2;
-        `,
+    update post
+    set points = points + $1
+    where id = $2
+      `,
           [realValue, postId]
         );
       });
     }
-
     return true;
   }
 
@@ -169,7 +170,7 @@ export class PostResolver {
 
   @Query(() => Post, { nullable: true })
   post(@Arg("id", () => Int) id: number): Promise<Post | undefined> {
-    return Post.findOne(id, {relations: ["creator"]});
+    return Post.findOne(id, { relations: ["creator"] });
   }
   @Mutation(() => Post)
   @UseMiddleware(isAuth)
@@ -199,8 +200,23 @@ export class PostResolver {
   }
 
   @Mutation(() => Boolean)
-  async deletePost(@Arg("id") id: number): Promise<boolean> {
-    await Post.delete(id);
+  @UseMiddleware(isAuth)
+  async deletePost(
+    @Arg("id", () => Int) id: number,
+    @Ctx() { req }: MyContext
+  ): Promise<boolean> {
+    // not cascade way
+    // const post = await Post.findOne(id);
+    // if (!post) {
+    //   return false;
+    // }
+    // if (post.creatorId !== req.session.userId) {
+    //   throw new Error("not authorized");
+    // }
+    // await Updoot.delete({ postId: id });
+    // await Post.delete({ id, creatorId: req.session.userId });
+    
+    await Post.delete({ id, creatorId: req.session.userId });
     return true;
   }
 }
