@@ -4,10 +4,11 @@ import { createUrqlClient } from "../../utils/createUrqlClient";
 import { Layout } from "../../components/Layout";
 import { Heading, Box } from "@chakra-ui/core";
 import { useGetPostFromUrl } from "../../utils/useGetPostFrom";
+import EditDeletePostButtons from "../../components/EditDeletePostButtons";
 
 const Post = ({}) => {
   const [{ data, error, fetching }] = useGetPostFromUrl();
-  
+
   if (fetching) {
     return (
       <Layout>
@@ -31,7 +32,11 @@ const Post = ({}) => {
   return (
     <Layout>
       <Heading mb={4}>{data.post.title}</Heading>
-      {data.post.text}
+      <Box mb={4}>{data.post.text}</Box>
+      <EditDeletePostButtons
+        id={data.post.id}
+        creatorId={data.post.creator.id}
+      />
     </Layout>
   );
 };
