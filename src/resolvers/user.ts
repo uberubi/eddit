@@ -1,4 +1,3 @@
-import { MyContext } from "./../types";
 import { validateRegister } from "./../utils/validateRegister";
 import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from "./../constants";
 import { User } from "../entities/User";

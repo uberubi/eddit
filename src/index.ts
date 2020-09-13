@@ -1,7 +1,9 @@
-import { Updoot } from './entities/Updoot';
-import { Post } from './entities/Post';
-import { User } from './entities/User';
-import { dbPassword as password } from './psql_config';
+import { createUpdootLoader } from './utils/createUpdootLoader';
+import { createUserLoader } from "./utils/createUserLoader";
+import { Updoot } from "./entities/Updoot";
+import { Post } from "./entities/Post";
+import { User } from "./entities/User";
+import { dbPassword as password } from "./psql_config";
 import "reflect-metadata";
 import { __prod__ } from "./constants";
 import express from "express";
@@ -15,21 +17,21 @@ import session from "express-session";
 import connectRedis from "connect-redis";
 import cors from "cors";
 import { COOKIE_NAME } from "./constants";
-import {createConnection} from 'typeorm'
-import path from 'path'
+import { createConnection } from "typeorm";
+import path from "path";
 
 const main = async () => {
   const conn = await createConnection({
-    type: 'postgres',
-    database: 'eddit2',
-    username: 'postgres',
+    type: "postgres",
+    database: "eddit2",
+    username: "postgres",
     password,
     logging: true,
     synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
-    entities: [Post, User, Updoot]
-  })
-  await conn.runMigrations()
+    entities: [Post, User, Updoot],
+  });
+  await conn.runMigrations();
   const app = express();
 
   // await Post.delete({})
@@ -66,7 +68,13 @@ const main = async () => {
       resolvers: [HelloResolver, PostResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req, res }) => ({ req, res, redis }),
+    context: ({ req, res }) => ({
+      req,
+      res,
+      redis,
+      userLoader: createUserLoader(),
+      updootLoader: createUpdootLoader(),
+    }),
   });
 
   apolloServer.applyMiddleware({ app, cors: false });

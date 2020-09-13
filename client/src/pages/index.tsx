@@ -1,6 +1,6 @@
 import { withUrqlClient } from "next-urql";
 import { createUrqlClient } from "../utils/createUrqlClient";
-import { useMeQuery, usePostsQuery } from "../generated/graphql";
+import { usePostsQuery } from "../generated/graphql";
 import { Layout } from "../components/Layout";
 import { Link, Stack, Box, Heading, Text, Flex, Button } from "@chakra-ui/core";
 import NextLink from "next/link";
@@ -14,12 +14,17 @@ const Index = () => {
     cursor: null as null | string,
   });
 
-  const [{ data, fetching }] = usePostsQuery({
+  const [{ data, error, fetching }] = usePostsQuery({
     variables,
   });
 
   if (!fetching && !data) {
-    return <div>you got query failed for some reason</div>;
+    return (
+      <>
+        <div>you got query failed for some reason</div>
+        <div>{error?.message}</div>
+      </>
+    );
   }
 
   return (
